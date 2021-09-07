@@ -30,5 +30,5 @@ def get_market_data(measure='Close'):
     print('Saved as clean_market.pkl')
 
 if __name__ == "__main__":
-    get_stock_data()
+    # get_stock_data()
     get_market_data(measure='Close')
