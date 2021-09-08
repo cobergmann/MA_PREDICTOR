@@ -80,7 +80,7 @@ def get_market_data(measure='Close'):
     '''This function cleans the market data (S&P 500).
     Measure can be 'Close' and/or 'Open'.'''
 
-    data = pd.read_csv('raw_data/210906_S&P500_SPX.csv')
+    data = pd.read_csv('raw_data/210908_S&P500_SPX.csv')
 
     # Transform date and set as index
     to_date = lambda x: datetime.strptime(x, '%d-%b-%Y')
