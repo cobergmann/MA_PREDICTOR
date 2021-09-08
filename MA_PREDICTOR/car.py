@@ -31,7 +31,7 @@ def get_abnormal_return(stock_df, market_df): # we need to save the df above so
     merged = stock_returns.join(market_returns)
 
     # Company return - market return
-    merged['abnormal_return'] = merged.comp_return - merged.market_return
+    merged['abnormal_return'] = merged.stock_return - merged.market_return
 
     return merged['abnormal_return']
 
