@@ -31,3 +31,4 @@ termcolor
 # new
 datetime
 yfinance
+notebook
