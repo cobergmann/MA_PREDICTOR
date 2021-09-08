@@ -4,8 +4,9 @@ from pandas.tseries.offsets import BDay
 import yfinance as yf
 from datetime import datetime
 import pickle
-
-
+from car import calculate_car
+import os
+from global_vars import STOCKS
 
 def get_stock_data():
 
@@ -97,6 +98,25 @@ def get_market_data(measure='Close'):
     data.to_pickle('MA_PREDICTOR/data/clean_market.pkl')
     print('Saved as clean_market.pkl')
 
+def add_car(df):
+
+    # if ticker not in dict put nan
+    df['car'] = df.apply(
+        lambda row:
+            calculate_car(row.acquiror_ticker, row.announcement_date)
+            if row.acquiror_ticker in STOCKS else np.NaN,
+        axis=1)
+    # name needs to be changed depending on which csv is used
+    df.to_csv('MA_PREDICTOR/data/ma_data_car.csv', index=False)
+    print('added car to df')
+
+
 if __name__ == "__main__":
     # get_stock_data()
-    get_market_data(measure='Close')
+    # get_market_data(measure='Close')
+    data = pd.read_csv('MA_PREDICTOR/data/ma_data.csv',
+                   parse_dates=['announcement_date'])
+    add_car(data)
+    # detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
+    #                          parse_dates=['announcement_date'])
+    # add_car(detail_data)
