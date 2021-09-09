@@ -107,16 +107,16 @@ def add_car(df):
             if row.acquiror_ticker in STOCKS else np.NaN,
         axis=1)
     # name needs to be changed depending on which csv is used
-    df.to_csv('MA_PREDICTOR/data/ma_data_car.csv', index=False)
+    df.to_csv('MA_PREDICTOR/data/ma_detailed_data_car.csv', index=False)
     print('added car to df')
 
 
 if __name__ == "__main__":
     # get_stock_data()
     # get_market_data(measure='Close')
-    data = pd.read_csv('MA_PREDICTOR/data/ma_data.csv',
-                   parse_dates=['announcement_date'])
-    add_car(data)
-    # detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
-    #                          parse_dates=['announcement_date'])
-    # add_car(detail_data)
+    # data = pd.read_csv('MA_PREDICTOR/data/ma_data.csv',
+    #                parse_dates=['announcement_date'])
+    # add_car(data)
+    detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
+                             parse_dates=['announcement_date'])
+    add_car(detail_data)
