@@ -107,7 +107,7 @@ def add_car(df):
             if row.acquiror_ticker in STOCKS else np.NaN,
         axis=1)
     # name needs to be changed depending on which csv is used
-    df.to_csv('MA_PREDICTOR/data/ma_data_car.csv', index=False)
+    df.to_csv('MA_PREDICTOR/data/ma_detailed_data_car.csv', index=False)
     print('added car to df')
 
 
