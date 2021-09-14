@@ -4,9 +4,10 @@ from pandas.tseries.offsets import BDay
 import yfinance as yf
 from datetime import datetime
 import pickle
-from car import calculate_car
+from MA_PREDICTOR.car import calculate_car
 import os
-from global_vars import STOCKS
+from MA_PREDICTOR.global_vars import STOCKS
+
 
 def get_stock_data():
 
