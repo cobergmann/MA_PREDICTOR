@@ -1,6 +1,6 @@
 import pandas as pd
 from pandas.tseries.offsets import BDay
-from global_vars import STOCKS, MARKET
+from MA_PREDICTOR.global_vars import STOCKS, MARKET
 from datetime import datetime
 
 
