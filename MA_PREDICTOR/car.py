@@ -1,7 +1,8 @@
 import pandas as pd
+import numpy as np
 from pandas.tseries.offsets import BDay
 from MA_PREDICTOR.global_vars import STOCKS, MARKET
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def get_stock_data(ticker, measure='Close'):
@@ -11,8 +12,7 @@ def get_stock_data(ticker, measure='Close'):
     stock_price = STOCKS[ticker]
     return stock_price[[measure]]
 
-def get_abnormal_return(stock_df, market_df): # we need to save the df above so
-    #we can use it here + we need to select only the period of time of interest for market_df.
+def get_abnormal_return(stock_df, market_df):
     '''Returns a dataframe with stock and market returns.'''
 
     # Stock return
@@ -32,13 +32,37 @@ def get_abnormal_return(stock_df, market_df): # we need to save the df above so
     return merged['abnormal_return']
 
 
-def event_horizon(announcement, start, end):
+def event_horizon(announcement, start, end, returns):
 
-    # Transform into business days
-    start_day = announcement - BDay(start)
+    # Memorize original announcement date
+    ann_helper = announcement
 
-    # Non-trading days (taking the later trading day)
-    end_day = announcement + BDay(end + 1) if announcement.weekday() > 4 else announcement + BDay(end)
+    # If announcement date is no trading day take nearest available
+    for add_day in range(0, 2):
+        if ann_helper + timedelta(days=add_day) in returns.index:
+            announcement = ann_helper + timedelta(days=add_day)
+            break
+
+        # Setting date out of range on purpose
+        else:
+            announcement -= timedelta(days=3000)
+
+    # Default setup if all is normal
+    start_day = announcement - timedelta(days=start)
+    end_day = announcement + timedelta(days=end)
+
+    # Iterate backwards in time if start_day is not traded
+    for add_day in range(6):
+        if start_day in returns.index:
+            break
+        start_day -= timedelta(days=1)
+
+
+    # Non-trading days: Taking next available trading day
+    for add_day in range(6):
+        if end_day in returns.index:
+            break
+        end_day += timedelta(days=1)
 
     return start_day, end_day
 
@@ -52,10 +76,35 @@ def calculate_car(ticker, announcement, start=1, end=1):
     returns = get_abnormal_return(stock, MARKET)
 
     # Define event horizon
-    start_day, end_day = event_horizon(announcement, start, end)
+    start_day, end_day = event_horizon(announcement, start, end, returns)
 
     # Calculate CAR
-    car = returns.loc[(returns.index >= start_day) &
-                      (returns.index <= end_day)].sum()
+    ar = returns.loc[(returns.index >= start_day) &
+                      (returns.index <= end_day)]
 
-    return car
+    # Check if df is empty or carries NaN values (in case returns not available)
+    if not ar.empty and not ar.isnull().values.any():
+        # CAR is the accumulated abnormal return
+        return ar.sum()
+    return np.nan
+
+
+def calculate_ar(ticker, announcement, start=1, end=1):
+
+    # Retrieve stock data
+    stock = get_stock_data(ticker)
+
+    # Calculate abnormal returns
+    returns = get_abnormal_return(stock, MARKET)
+
+    # Define event horizon
+    start_day, end_day = event_horizon(announcement, start, end, returns)
+
+    # Calculate AR
+    ar = returns.loc[(returns.index >= start_day)
+                          & (returns.index <= end_day)]
+
+    # Check if df is empty or carries NaN values (in case returns not available)
+    if not ar.empty and not ar.isnull().values.any():
+        return ar
+    return np.nan

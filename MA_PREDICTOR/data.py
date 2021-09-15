@@ -101,23 +101,31 @@ def get_market_data(measure='Close'):
 
 def add_car(df):
 
-    # if ticker not in dict put nan
-    df['car'] = df.apply(
-        lambda row:
-            calculate_car(row.acquiror_ticker, row.announcement_date)
-            if row.acquiror_ticker in STOCKS else np.NaN,
-        axis=1)
-    # name needs to be changed depending on which csv is used
-    df.to_csv('MA_PREDICTOR/data/ma_detailed_data_car.csv', index=False)
-    print('added car to df')
+    # CAR for different event horizons
+    event_horizons = [1, 3, 5, 10]
+
+    for horizon in event_horizons:
+        df[f'car_{horizon}'] = df.apply(
+            lambda row:
+                calculate_car(row.acquiror_ticker, row.announcement_date,
+                              start=horizon, end=horizon)
+                if row.acquiror_ticker in STOCKS
+                else np.NaN, # if ticker not in dict put nan
+                axis=1)
+        print(f'Added car_{horizon} to dataframe.')
+
+    # Name needs to be changed depending on which csv is used
+    df.to_csv(f'MA_PREDICTOR/data/ma_data_car.csv',
+                  index=False)
+    print(f'Added all CARs to dataframe.')
 
 
 if __name__ == "__main__":
     # get_stock_data()
     # get_market_data(measure='Close')
-    # data = pd.read_csv('MA_PREDICTOR/data/ma_data.csv',
-    #            parse_dates=['announcement_date'])
-    # add_car(data)
-    detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
-                             parse_dates=['announcement_date'])
-    add_car(detail_data)
+    data = pd.read_csv('MA_PREDICTOR/data/ma_data.csv',
+               parse_dates=['announcement_date'])
+    add_car(data)
+    # detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
+    #                          parse_dates=['announcement_date'])
+    # add_car(detail_data)
