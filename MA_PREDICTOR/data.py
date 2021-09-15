@@ -126,6 +126,6 @@ if __name__ == "__main__":
     data = pd.read_csv('MA_PREDICTOR/data/ma_data.csv',
                parse_dates=['announcement_date'])
     add_car(data)
-    # detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
-    #                          parse_dates=['announcement_date'])
-    # add_car(detail_data)
+    #detail_data = pd.read_csv('MA_PREDICTOR/data/ma_detailed_data.csv',
+    #                         parse_dates=['announcement_date'])
+    #add_car(detail_data)
