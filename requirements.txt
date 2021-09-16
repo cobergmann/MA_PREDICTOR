@@ -34,3 +34,4 @@ yfinance
 notebook
 xgboost
 statsmodels
+streamlit
