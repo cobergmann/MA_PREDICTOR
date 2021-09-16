@@ -33,3 +33,4 @@ datetime
 yfinance
 notebook
 xgboost
+statsmodels
