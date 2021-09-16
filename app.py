@@ -1,15 +1,18 @@
 import streamlit as st
-
+import joblib
 import datetime
 import pandas as pd
 import requests
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib
 
 data=pd.read_csv("MA_PREDICTOR/data/ma_detailed_data_car_clean.csv")
-#st.write(data.head())
+
 '''
 # M&A Predictor
 
-What would be the Cumulative Abnormal Return for a given merger with the following parameters:
+What would be the probabilities that the Cumulative Abnormal Return for a given merger with the following parameters will be positive, negative or neutral?
 '''
 
 target_status = st.selectbox('What is the target status?',
@@ -87,27 +90,58 @@ t_fin_adv_count = st.multiselect(
         'UBS'
     ])
 
-
-params = dict(target_status=target_status,
-              acquisition_count=acquisition_count,
-              shares_at_announcement=shares_at_announcement,
-              shares_acquired=shares_acquired,
-              consideration_offered=consideration_offered,
-              bidder_count=bidder_count,
-              rel_deal_value=deal_value / total_assets,
-              cross_border=cross_border,
-              relatedness=relatedness,
-              economic_sector_ac=econ_sector_ac,
-              business_sector_ac=business_sector_ac,
-              economic_sector_target=econ_sector_t,
-              business_sector_target=business_sector_t,
-              cluster_category=cluster_category,
-              a_fin_adv_count=list(a_fin_adv_count),
-              t_fin_adv_count=list(t_fin_adv_count))
+car_wanted = st.selectbox(
+    'Which horizon do you want to select to compute the CAR :',
+    options=[
+        1, 3, 5, 10
+    ], key=10 )
 
 
+
+params = dict(target_status=[target_status],
+              acquisition_count=[acquisition_count],
+              shares_at_announcement=[shares_at_announcement],
+              shares_acquired=[shares_acquired],
+              consideration_offered=[consideration_offered],
+              bidder_count=[bidder_count],
+              rel_deal_value=[deal_value / total_assets],
+              cross_border=[cross_border],
+              relatedness=[relatedness],
+              economic_sector_ac=[econ_sector_ac],
+              business_sector_ac=[business_sector_ac],
+              economic_sector_target=[econ_sector_t],
+              business_sector_target=[business_sector_t],
+              cluster_category=[cluster_category],
+              a_fin_adv_count=[len(a_fin_adv_count)],
+              t_fin_adv_count=[len(t_fin_adv_count)])
+
+df_pred= pd.DataFrame.from_dict(params)
+
+# Testing the model
+sgd = joblib.load(f'MA_PREDICTOR/models/SGDClassifier_car{car_wanted}')
+arr=sgd.predict_proba(df_pred)[0]
+results = list(arr)
+
+
+# Pie chart, where the slices will be ordered and plotted counter-clockwise:
+labels = 'Negative', 'Neutral', 'Positive'
+sizes = results
+explode = (0, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
 
 
 if st.button('Get your prediction'):
-    st.write('Why hello there')
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes,
+            explode=explode,
+            autopct='%1.0f%%',
+            shadow=False,
+            startangle=90,
+            colors=['#2a4d69', '#4b86b4', '#adcbe3'])
+    fig1.legend(
+        labels,
+        edgecolor='white',
+        prop=matplotlib.font_manager.FontProperties(family='monospace'))
+    fig1.patch.set_facecolor('#0e1117')
+    ax1.axis('equal')   #Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig1)
     st.balloons()
