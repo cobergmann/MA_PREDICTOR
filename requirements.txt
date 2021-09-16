@@ -35,3 +35,4 @@ notebook
 xgboost
 statsmodels
 streamlit
+matplotlib

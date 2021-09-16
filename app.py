@@ -1,11 +1,9 @@
 import streamlit as st
 import joblib
-import datetime
 import pandas as pd
-import requests
 import matplotlib.pyplot as plt
-import numpy as np
 import matplotlib
+import numpy as np
 
 data=pd.read_csv("MA_PREDICTOR/data/ma_detailed_data_car_clean.csv")
 
