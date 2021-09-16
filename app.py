@@ -10,36 +10,56 @@ data=pd.read_csv("MA_PREDICTOR/data/ma_detailed_data_car_clean.csv")
 '''
 # M&A Predictor
 
-What would be the probabilities that the Cumulative Abnormal Return for a given merger with the following parameters will be positive, negative or neutral?
+What would be the probabilities that the cumulative abnormal return for a given merger with the following parameters will be positive, negative or neutral?
 '''
 
-target_status = st.selectbox('What is the target status?',
-                             options=['public', 'others'])
+target_status = st.selectbox(
+    "What is the target's status?",
+    options=['public', 'others'])
 
 acquisition_count = st.number_input(
-    'How many acquisitions have been done by the acquiror company?', value=7)
-shares_at_announcement = st.selectbox('Did the acquiror company owned shares of the target company before the merger ?',
-                                      options=['yes', 'no'])
+    'How many successful acquisitions has the acquiring company had in the past?',
+    value=7)
+
+shares_at_announcement = st.selectbox(
+    'Did the acquiror own shares of the target before the merger?',
+    options=['yes', 'no'])
+
 shares_acquired = st.selectbox(
-    'Will the acquiring company own the totality of the target shares after the merger ?',
+    "Will the acquiror obtain full control of the target after the merger?",
     options=['full', 'not_full'])
+
 consideration_offered = st.selectbox(
-    'How the merger will be financed ?',
+    'How will the merger be financed?',
     options=['Cash', 'Other'])
+
 bidder_count = st.number_input(
-    'How many bidders were present in the merger process?', value=1)
-deal_value = st.number_input("What is the deal value (in million)?", value=2654)
-total_assets = st.number_input("What is the total value of assets (in million)?", value=1234)
-cross_border = st.selectbox('Is the merger national or cross-border ?',
-                            options=['national', 'cross_border'])
+    'How many bidders were present in the merger process?',
+    value=1)
+
+deal_value = st.number_input(
+    "What is the deal value (in million)?",
+    value=2000)
+
+total_assets = st.number_input(
+    "What is the total value of assets (in million)?",
+    value=10000)
+
+cross_border = st.selectbox(
+    'Is the acuisition happening across borders?',
+    options=['national', 'cross_border'])
+
 relatedness = st.selectbox(
-    'How related are the acquiring and the target companies to each other ?',
+    'What is the relation between target and acquiror?',
     options=[
-        'not_related', 'industry', 'industry_group', 'economic_sector',
-        'business_sector'
-    ])
+        'not_related',
+        'industry',
+        'industry_group',
+        'economic_sector',
+        'business_sector'])
+
 econ_sector_ac = st.selectbox(
-    'What is the economic sector of the acquiring company?',
+    'In what economic sector is the acquiror active?',
     options=[
         'Consumer Non-Cyclicals', 'Financials', 'Basic Materials', 'Energy',
         'Industrials', 'Real Estate', 'Technology', 'Healthcare',
@@ -48,19 +68,21 @@ econ_sector_ac = st.selectbox(
 
 
 business_sector_ac = st.selectbox(
-    'What is the business sector of the acquiring company?',
-    options=list(data[data['economic_sector_ac'] == econ_sector_ac]['business_sector_ac'].unique()))
+    'In what business sector is the acquiror active?',
+    options=list(data[data['economic_sector_ac'] == econ_sector_ac]
+                 ['business_sector_ac'].unique()))
 
 econ_sector_t = st.selectbox(
-    'What is the economic sector of the target company?',
+    'In what economic sector is the target active?',
     options=[
-        'Consumer Non-Cyclicals', 'Financials', 'Basic Materials', 'Energy',
-        'Industrials', 'Real Estate', 'Technology', 'Healthcare',
-        'Consumer Cyclicals', 'Utilities', 'Academic & Educational Services'
-    ])
+        'Consumer Non-Cyclicals', 'Financials',
+        'Basic Materials', 'Energy', 'Industrials',
+        'Real Estate', 'Technology', 'Healthcare',
+        'Consumer Cyclicals', 'Utilities',
+        'Academic & Educational Services'])
 
 business_sector_t = st.selectbox(
-    'What is the business sector of the target company?',
+    'In what business sector is the target active?',
     options=list(data[data['economic_sector_target'] == econ_sector_t]
                  ['business_sector_ac'].unique()))
 
@@ -73,7 +95,7 @@ cluster_category = st.selectbox(
     ])
 
 a_fin_adv_count = st.multiselect(
-    'Select the financial advisors for the acquiring company (if present in the list):',
+    "Select the acquiror's financial advisors (if present in the list):",
     options=[
         'Barclays', 'Bank of America', 'Citi', 'Credit Suisse',
         'Goldman Sachs', 'JP Morgan', 'Lazard', 'Morgan Stanley', 'Rothschild',
@@ -81,7 +103,7 @@ a_fin_adv_count = st.multiselect(
     ])
 
 t_fin_adv_count = st.multiselect(
-    'Select the financial advisors for the target company (if present in the list):',
+     "Select the target's financial advisors (if present in the list):",
     options=[
         'Barclays', 'Bank of America', 'Citi', 'Credit Suisse',
         'Goldman Sachs', 'JP Morgan', 'Lazard', 'Morgan Stanley', 'Rothschild',
@@ -89,7 +111,7 @@ t_fin_adv_count = st.multiselect(
     ])
 
 car_wanted = st.selectbox(
-    'Which horizon do you want to select to compute the CAR :',
+    'Which time horizon do you want to select to compute the CAR:',
     options=[
         1, 3, 5, 10
     ], key=10 )
